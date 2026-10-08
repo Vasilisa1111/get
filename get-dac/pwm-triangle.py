@@ -2,7 +2,7 @@ import pwm_dac as pwm
 import signal_generator as sg
 import time
 
-amplitude = 3.2
+amplitude = 3.185
 signal_frequency = 10
 sampling_frequency = 1000
 
