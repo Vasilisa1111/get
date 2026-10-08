@@ -4,12 +4,12 @@ import time
 
 
 def main():
-    amplitude = 3.185             
+    amplitude = 4.2            
     signal_frequency = 10       
     sampling_frequency = 1000   
 
     try:
-        dac = mcp.MCP4725(4.2, verbose=False)
+        dac = mcp.MCP4725(5.2, verbose=False)
         print(f"Запущена генерация синусоиды на MCP4725:")
         print(f"-Частота синуса: {signal_frequency} Гц")
         print(f"-Частота дискретизации: {sampling_frequency} Гц")
