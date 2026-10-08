@@ -2,14 +2,18 @@ import mcp4725_driver as mcp
 import signal_generator as sg
 import time
 
-amplitude = 3.2             
-signal_frequency = 10       
-sampling_frequency = 1000   
 
-if __name__ == "__main__":
+def main():
+    amplitude = 3.185             
+    signal_frequency = 10       
+    sampling_frequency = 1000   
+
     try:
         dac = mcp.MCP4725(5.0, verbose=False)
-
+        print(f"Запущена генерация синусоиды на MCP4725:")
+        print(f"-Частота синуса: {signal_frequency} Гц")
+        print(f"-Частота дискретизации: {sampling_frequency} Гц")
+        print(f"Для остановки нажмите Ctrl+C\n")
         start_time = time.time()
 
         while True:
@@ -19,6 +23,9 @@ if __name__ == "__main__":
             
             dac.set_voltage(target_voltage)
             sg.wait_for_sampling_period(sampling_frequency)
-
+    except KeyboardInterrupt:
+        print("\nГенерация синусоиды остановлена.")
     finally:
         dac.deinit()
+if __name__ == "__main__":
+    main()

@@ -9,8 +9,8 @@ def main():
     dynamic_range = 3.185                         # Максимальное напряжение R2R ЦАП (В)
 
     # Параметры генерируемого сигнала
-    signal_frequency = 1.0      # Частота синуса (Гц)
-    sampling_frequency = 500.0  # Частота дискретизации (Гц)
+    signal_frequency = 20.0      # Частота синуса (Гц)
+    sampling_frequency = 1000.0  # Частота дискретизации (Гц)
     amplitude = 3.185           # Желаемая амплитуда сигнала (В)
 
     # Инициализация ЦАП
@@ -33,6 +33,10 @@ def main():
 
             # 2. Переводим в напряжение (0.0 .. amplitude В)
             voltage = norm_amp * amplitude
+
+            digital_code=int((voltage/dynamic_range)*255)
+
+            digital_code = max(0,min(255,digital_code))
 
             # 3. Выдаем напряжение на ЦАП
             dac.set_voltage(voltage)

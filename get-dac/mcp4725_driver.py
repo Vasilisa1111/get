@@ -14,13 +14,13 @@ class MCP4725:
         self.dynamic_range = dynamic_range
 
     def deinit(self):
-        """Закрывает соединение с шиной I2C."""
+        "Закрывает соединение с шиной I2C."
         self.bus.close()
         if self.verbose:
             print("Соединение по I2C закрыто.")
 
     def set_number(self, number):
-        """Отправляет 12-битное целое число (0..4095) в MCP4725."""
+        "Отправляет 12-битное целое число (0..4095) в MCP4725."
         if not isinstance(number, int):
             print("На вход ЦАП можно подавать только целые числа")
             return
@@ -43,7 +43,7 @@ class MCP4725:
             )
 
     def set_voltage(self, voltage):
-        """Принимает напряжение в Вольтах и передаёт число в set_number."""
+        "Принимает напряжение в Вольтах и передаёт число в set_number."
         if not (0.0 <= voltage <= self.dynamic_range):
             if self.verbose:
                 print(
@@ -57,9 +57,10 @@ class MCP4725:
         self.set_number(number)
 
 
+
 if __name__ == "__main__":
     try:
-        dac = MCP4725(dynamic_range=3.185, address=0x61, verbose=True)
+        dac = MCP4725(dynamic_range=5.2, address=0x61, verbose=True)
 
         while True:
             try:
