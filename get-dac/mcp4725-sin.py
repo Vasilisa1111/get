@@ -9,7 +9,7 @@ def main():
     sampling_frequency = 1000   
 
     try:
-        dac = mcp.MCP4725(5.0, verbose=False)
+        dac = mcp.MCP4725(4.2, verbose=False)
         print(f"Запущена генерация синусоиды на MCP4725:")
         print(f"-Частота синуса: {signal_frequency} Гц")
         print(f"-Частота дискретизации: {sampling_frequency} Гц")

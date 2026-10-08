@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/b03-601/Desktop/Repositories/get/get-dac/mcp4725-sin.py", line 31, in <module>
+    main()
+  File "/home/b03-601/Desktop/Repositories/get/get-dac/mcp4725-sin.py", line 24, in main
+    dac.set_voltage(target_voltage)
+  File "/home/b03-601/Desktop/Repositories/get/get-dac/mcp4725_driver.py", line 57, in set_voltage
+    self.set_number(number)
+  File "/home/b03-601/Desktop/Repositories/get/get-dac/mcp4725_driver.py", line 37, in set_number
+    self.bus.write_byte_data(self.address, first_byte, second_byte)
+TimeoutError: [Errno 110] Connection timed out
