@@ -1,9 +1,9 @@
 import time
 
-import r2r_adc
+import r2r_adc 
 import adc_plot
 
-dynamic_range = 3.16 
+dynamic_range = 3.3 
 
 adc = r2r_adc.R2R_ADC(dynamic_range, compare_time=0.0001)
 
