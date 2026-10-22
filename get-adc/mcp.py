@@ -3,7 +3,7 @@ import time
 import mcp3021_driver
 import adc_plot
 
-dynamic_range = 5.0
+dynamic_range = 5.195
 
 adc = mcp3021_driver.MCP3021(dynamic_range)
 

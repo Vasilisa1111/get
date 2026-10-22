@@ -31,12 +31,12 @@ class MCP3021:
 if __name__ == "__main__":
     adc = None
     try:
-        adc = MCP3021(5.0)
+        adc = MCP3021(5.195)
 
         while True:
             voltage = adc.get_voltage()
             print(f"Напряжение: {voltage:.2f} В")
-            time.sleep(1)
+            time.sleep(1)                                                  
 
     finally:
         if adc is not None:
