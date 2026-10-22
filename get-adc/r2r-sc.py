@@ -3,13 +3,13 @@ import time
 import r2r_adc
 import adc_plot
 
-dynamic_range = 3.28
+dynamic_range = 3.295
 
 adc = r2r_adc.R2R_ADC(dynamic_range, compare_time=0.0001)
 
 voltage_values = []
 time_values = []
-duration = 10.0
+duration = 3.0
 
 try:
     start = time.time()
