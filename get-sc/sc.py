@@ -3,15 +3,14 @@ import numpy as np
 import RPi.GPIO as GPIO
 import mcp3021_driver
 
-# 1. Теоретические исходные данные цепи
-R = 1_000_000  # 1 МОм
-C = 10e-6      # 10 мкФ
-TAU_TEOR = R * C  # Теоретическая постоянная времени (10 секунд)
-
-CHARGE_PIN = 17
-# Укажите измеренное напряжение на пине питания АЦП. 
-# Благодаря автокалибровке небольшая погрешность здесь больше не сломает скрипт.
-DYNAMIC_RANGE = 4.0 
+# ==========================================
+# НАСТРОЙКИ ЭКСПЕРИМЕНТА (Вводите данные здесь)
+# ==========================================
+CHARGE_PIN = 14
+DYNAMIC_RANGE = 5.1      # Фактическое напряжение на пине питания АЦП (В)
+CHECK_INTERVAL = 2.7     # Как часто проверять "полочку" (в секундах)
+VOLTAGE_TOLERANCE = 0.015 # Допустимое изменение напряжения на "полочке" (В)
+# ==========================================
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(CHARGE_PIN, GPIO.OUT)
@@ -21,7 +20,7 @@ time_values = []
 voltage_values = []
 
 def safe_read_adc():
-    """Считывает АЦП, игнорируя единичные ошибки шины I2C (Remote I/O error)"""
+    """Считывает АЦП, игнорируя единичные сбои шины I2C (Remote I/O error)"""
     while True:
         try:
             return adc.get_voltage()
@@ -29,52 +28,59 @@ def safe_read_adc():
             time.sleep(0.005)
 
 try:
-    print("--- ФАЗА 0: АВТОКАЛИБРОВКА ЦЕПИ ---")
-    print(f"Зарядка для определения U_max (ждем 5*tau = {TAU_TEOR * 5:.0f} с)...")
-    GPIO.output(CHARGE_PIN, 1)
-    time.sleep(TAU_TEOR * 5)  # Гарантированный выход на физическую асимптоту
-    U_max = safe_read_adc()
-    
-    print(f"Разрядка для определения U_min (ждем 5*tau = {TAU_TEOR * 5:.0f} с)...")
-    GPIO.output(CHARGE_PIN, 0)
-    time.sleep(TAU_TEOR * 5)  # Гарантированный сброс до абсолютного нуля цепи
-    U_min = safe_read_adc()
-    
-    print(f"[!] Калибровка завершена. Фактические пределы: {U_min:.3f} В — {U_max:.3f} В\n")
-
-    # Вычисляем пороги для остановки записи (97% от размаха для заряда, 3% для разряда)
-    voltage_range = U_max - U_min
-    charge_threshold = U_min + (voltage_range * 0.97)
-    discharge_threshold = U_min + (voltage_range * 0.03)
-
-
-    print("--- ФАЗА 1: СБОР ДАННЫХ (ЗАРЯДКА) ---")
     global_start = time.time()
+    
+    # --- ФАЗА 1: ЗАРЯДКА ---
+    print("--- ФАЗА 1: ЗАРЯДКА ---")
     GPIO.output(CHARGE_PIN, 1)
     
-    voltage = U_min
-    while voltage < charge_threshold:
+    last_check_time = time.time()
+    last_voltage = safe_read_adc()
+    
+    while True:
         voltage = safe_read_adc()
         current_time = time.time() - global_start
         
         voltage_values.append(voltage)
         time_values.append(current_time)
         print(f"\rВремя: {current_time:.1f} с | Напряжение: {voltage:.3f} В", end='', flush=True)
-        time.sleep(0.01)
+        
+        # Умная остановка: если за CHECK_INTERVAL напряжение выросло меньше чем на VOLTAGE_TOLERANCE
+        if time.time() - last_check_time >= CHECK_INTERVAL:
+            if abs(voltage - last_voltage) < VOLTAGE_TOLERANCE:
+                print(f"\n[!] Конденсатор заряжен (полочка достигнута). Переключение фазы...")
+                break
+            last_check_time = time.time()
+            last_voltage = voltage
+            
+        time.sleep(0.01) # Защита от перегрузки шины
 
-    print("\n\n--- ФАЗА 2: СБОР ДАННЫХ (РАЗРЯДКА) ---")
+    # --- ФАЗА 2: РАЗРЯДКА ---
+    print("\n--- ФАЗА 2: РАЗРЯДКА ---")
     GPIO.output(CHARGE_PIN, 0)
     
-    while voltage > discharge_threshold:
+    last_check_time = time.time()
+    last_voltage = safe_read_adc()
+    
+    while True:
         voltage = safe_read_adc()
         current_time = time.time() - global_start
         
         voltage_values.append(voltage)
         time_values.append(current_time)
         print(f"\rВремя: {current_time:.1f} с | Напряжение: {voltage:.3f} В", end='', flush=True)
+        
+        if time.time() - last_check_time >= CHECK_INTERVAL:
+            if abs(voltage - last_voltage) < VOLTAGE_TOLERANCE:
+                print(f"\n[!] Конденсатор разряжен.")
+                break
+            last_check_time = time.time()
+            last_voltage = voltage
+            
         time.sleep(0.01)
 
-    print("\n\nЭксперимент завершен. Запись в файл...")
+    # --- СОХРАНЕНИЕ ---
+    print("\nЭксперимент завершен. Запись в файл...")
     data = np.column_stack((time_values, voltage_values))
     np.savetxt('data.csv',
                data,
