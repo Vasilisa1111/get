@@ -9,7 +9,7 @@ def plot_voltage_vs_time(time_data, voltage_data):
     plt.plot(time_data, voltage_data, label='U(t)', color='blue', linewidth=2)
     
     # 3. Названия графика и осей
-    plt.title('Процесс заряда и разряда RC-цепи\n(R = 1 МОм, C = 10 мкФ)')
+    plt.title('Процесс заряда и разряда RC-цепи')
     plt.xlabel('Время [с]')
     plt.ylabel('Напряжение [В]')
     
@@ -24,13 +24,13 @@ def plot_voltage_vs_time(time_data, voltage_data):
     plt.legend()
     
     # 6. Сохранение графика в файл (вместо plt.show())
-    plt.savefig('rc-plot.png', dpi=300)
+    plt.savefig('rc-plot1.png', dpi=300)
     print("График успешно сохранен как rc-plot.png")
 
 # Основная логика работы с файлом
 if __name__ == '__main__':
     # Загружаем данные. skiprows=1 пропускает текстовый заголовок
-    data = np.loadtxt('data.csv', delimiter=',', skiprows=1)
+    data = np.loadtxt('data1.csv', delimiter=',', skiprows=1)
     
     # Разделяем столбцы
     time_col = data[:, 0]

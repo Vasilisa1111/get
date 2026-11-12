@@ -31,7 +31,7 @@ class MCP3021:
 if __name__ == "__main__":
     adc = None
     try:
-        adc = MCP3021(5.195)
+        adc = MCP3021(4)
 
         while True:
             voltage = adc.get_voltage()

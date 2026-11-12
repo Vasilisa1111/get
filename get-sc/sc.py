@@ -1,22 +1,22 @@
 import time
 import numpy as np
 import RPi.GPIO as GPIO
-import mcp3021_driver #[cite: 3]
+import mcp3021_driver 
 
 # Настройки пинов и напряжений
 CHARGE_PIN = 14
-MAX_CHARGE_VOLTAGE = 3.26  # Реальное напряжение логической единицы GPIO (обычно около 3.26 - 3.3 В)
-dynamic_range = 5.195      #[cite: 3]
+MAX_CHARGE_VOLTAGE = 2.6  # Реальное напряжение логической единицы GPIO (обычно около 3.26 - 3.3 В)
+dynamic_range = 4      
 
 # Инициализация GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(CHARGE_PIN, GPIO.OUT)
 
 # Инициализация АЦП MCP3021
-adc = mcp3021_driver.MCP3021(dynamic_range) #[cite: 3]
+adc = mcp3021_driver.MCP3021(dynamic_range) 
 
-voltage_values = [] #[cite: 3]
-time_values = []    #[cite: 3]
+voltage_values = [] 
+time_values = []    
 
 try:
     print("Начало эксперимента: Зарядка...")
@@ -28,9 +28,10 @@ try:
     
     # Заряжаем до 95% от напряжения питания GPIO (~3.1 В)
     while voltage < 0.95 * MAX_CHARGE_VOLTAGE:
-        voltage = adc.get_voltage() #[cite: 3]
-        voltage_values.append(voltage) #[cite: 3]
-        time_values.append(time.time() - start_time) #[cite: 3]
+        voltage = adc.get_voltage() 
+        voltage_values.append(voltage) 
+        time_values.append(time.time() - start_time) 
+        time.sleep(0.01)
         
     print("Конденсатор заряжен. Начало разрядки...")
     # Отключаем питание, конденсатор начинает разряжаться через резистор
@@ -38,15 +39,15 @@ try:
     
     # Разряжаем до 5% от напряжения (~0.16 В)
     while voltage > 0.05 * MAX_CHARGE_VOLTAGE:
-        voltage = adc.get_voltage() #[cite: 3]
-        voltage_values.append(voltage) #[cite: 3]
-        time_values.append(time.time() - start_time) #[cite: 3]
+        voltage = adc.get_voltage() 
+        voltage_values.append(voltage) 
+        time_values.append(time.time() - start_time) 
 
     print("Эксперимент завершен. Сохранение данных...")
     
     # Объединение и сохранение по инструкции
     data = np.column_stack((time_values, voltage_values))
-    np.savetxt('data.csv',
+    np.savetxt('data1.csv',
                data,
                delimiter=',',
                fmt='%.4f',
@@ -59,4 +60,4 @@ finally:
     # Безопасный выход
     GPIO.output(CHARGE_PIN, 0)
     GPIO.cleanup()
-    adc.deinit() #[cite: 3]
+    adc.deinit() 
