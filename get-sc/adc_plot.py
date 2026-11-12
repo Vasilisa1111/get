@@ -24,7 +24,7 @@ def plot_voltage_vs_time(time_data, voltage_data):
     plt.legend()
     
     # 6. Сохранение графика в файл (вместо plt.show())
-    plt.savefig('rc-plot.png', dpi=300)
+    plt.savefig('rc-plot+.png', dpi=300)
     print("График успешно сохранен как rc-plot.png")
 
 # Основная логика работы с файлом

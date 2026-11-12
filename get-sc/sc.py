@@ -3,11 +3,9 @@ import numpy as np
 import RPi.GPIO as GPIO
 import mcp3021_driver
 
-# ==========================================
-CHARGE_PIN = 17
-DYNAMIC_RANGE = 4.0      # Измеренное напряжение на пине питания АЦП (В)
-TARGET_PERCENT = 0.95    # Академический предел (95% от максимума)
-# ==========================================
+CHARGE_PIN = 14
+DYNAMIC_RANGE = 5.1     # Измеренное напряжение на пине питания АЦП (В)
+TARGET_PERCENT = 0.99   
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(CHARGE_PIN, GPIO.OUT)
@@ -41,7 +39,7 @@ try:
         voltage = safe_read_adc()
         print(f"\rНапряжение: {voltage:.3f} В", end='', flush=True)
         if time.time() - last_check_time >= 2.0:
-            if abs(voltage - last_voltage) < 0.015:
+            if abs(voltage - last_voltage) < 0.0015:
                 U_max = voltage
                 break
             last_check_time = time.time()
