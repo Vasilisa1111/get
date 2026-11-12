@@ -24,13 +24,13 @@ def plot_voltage_vs_time(time_data, voltage_data):
     plt.legend()
     
     # 6. Сохранение графика в файл (вместо plt.show())
-    plt.savefig('rc-plot1.png', dpi=300)
+    plt.savefig('rc-plot.png', dpi=300)
     print("График успешно сохранен как rc-plot.png")
 
 # Основная логика работы с файлом
 if __name__ == '__main__':
     # Загружаем данные. skiprows=1 пропускает текстовый заголовок
-    data = np.loadtxt('data1.csv', delimiter=',', skiprows=1)
+    data = np.loadtxt('data.csv', delimiter=',', skiprows=1)
     
     # Разделяем столбцы
     time_col = data[:, 0]
