@@ -1,0 +1,2 @@
+Relative humidity = 35.9 %
+Temperature = 23.0 C
